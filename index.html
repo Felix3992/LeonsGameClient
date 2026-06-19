@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <title>Leons Game</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="index.css" rel="stylesheet">
+    <script src="Types.js"></script>
+    <script src="pre_game.js"></script>
+    <script src="game.js"></script>
+  </head>
+  <body>
+    <div id="pre_game">
+      <h1>Lons Game</h1>
+      <div>
+        <input id="name_input" type="text" placeholder="Name">
+        <button class="btn btn-primary" type="button" onclick="save_name()">Save Name</button>
+      </div>
+      <div>
+        <div id="units_select" class="d-flex flex-wrap"></div>
+        <button class="btn btn-primary" type="button" onclick="save_units()">Save Units</button>
+      </div>
+      <div>
+        <input id="deck" type="text" placeholder="Deck" value="test">
+        <button class="btn btn-primary" type="button" onclick="save_deck()">Save Deck</button>
+      </div>
+      <button class="btn btn-primary" type="button" onclick="sock.send('ready_up')">Ready Up</button>
+    </div>
+    <div id="game" hidden>
+      <div id="opp_field">
+        <div>
+          <h2 id="opp_name">Leon</h2>
+          <span id="opp_lives">80</span>
+        </div>
+        <div id="opp_units" class="units d-flex w-100 justify-content-center align-items-end"></div>
+      </div>
+      <div id="field">
+        <div id="units" class="units d-flex w-100 justify-content-center align-items-start"></div>
+        <div>
+          <span id="lives">80</span>
+          <h2 id="name">Leon</h2>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

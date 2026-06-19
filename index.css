@@ -1,0 +1,64 @@
+@media screen and (width >= 1200px) {
+    #game {
+        height: 100vh;
+    }
+
+    #game > div:first-child {
+        height: 50%;
+        padding-bottom: 2vh;
+    }
+
+    #game > div:nth-child(2) {
+        height: 50%;
+        padding-top: 2vh;
+    }
+
+    .units {
+        height: 80%;
+    }
+
+    #units_select {
+        gap: 1.5vw;
+    }
+
+    unit-card {
+        aspect-ratio: 3 / 4;
+        background-size: cover;
+    }
+
+    #units-select > unit-card {
+        width: 15%;
+        font-size: 2vw;
+        cursor: pointer;
+    }
+
+    unit-card > div > span {
+        padding-bottom: 2vh;
+    }
+
+    .units {
+        gap: 5vw;
+    }
+
+    .units > div > unit-card {
+        width: 100%;
+    }
+
+    .units > .card {
+        font-size: 2vw;
+    }
+
+    .units > div {
+        width: 15vw;
+    }
+
+    .units > div > card-stack {
+        position: absolute;
+        top: 7vh;
+        width: 15vw;
+    }
+}
+
+@media (width < 1200px) {
+
+}
