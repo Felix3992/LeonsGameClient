@@ -50,7 +50,7 @@ sock.onmessage = (event) => {
 function create_units() {
     let units_div = document.getElementById("units_select");
     for (let ident in units) {
-        card = document.createElement("unit-card");
+        let card = document.createElement("unit-card");
         card.build(units[ident], true);
 
         units_div.appendChild(card);
@@ -80,7 +80,14 @@ function click_unit(card) {
     }
 }
 
-function save_name() {
+function ready_up() {
+    set_name();
+    set_units();
+    set_deck();
+    sock.send('ready_up');
+}
+
+function set_name() {
     let name = document.getElementById('name_input').value;
     if (!name)
         return alert("name is required");
@@ -89,14 +96,14 @@ function save_name() {
     sock.send('set_name: ' + name);
 }
 
-function save_units() {
+function set_units() {
     if (selected_units.indexOf(undefined) > -1)
         return alert("select 3 units");
 
     sock.send("set_units: " + JSON.stringify(selected_units));
 }
 
-function save_deck() {
+function set_deck() {
     let deck = document.getElementById('deck').value;
     if (!deck)
         return alert("Deck is required");
@@ -105,6 +112,8 @@ function save_deck() {
 }
 
 function start_game(opp_name, opp_units) {
+    sock.onmessage = (event) => handle_game_messages(event.data);
+
     document.getElementById("pre_game").remove();
 
     opp_units = opp_units.map(ident => {

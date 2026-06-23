@@ -5,12 +5,12 @@
 
     #game > div:first-child {
         height: 50%;
-        padding-bottom: 2vh;
+        padding-bottom: 1.5vh;
     }
 
     #game > div:nth-child(2) {
         height: 50%;
-        padding-top: 2vh;
+        padding-top: 1.5vh;
     }
 
     .units {
@@ -18,17 +18,18 @@
     }
 
     #units_select {
+        padding: 2vh 2vw;
         gap: 1.5vw;
+        font-size: 2vw;
     }
 
     unit-card {
         aspect-ratio: 3 / 4;
-        background-size: cover;
+        background-size: contain;
     }
 
-    #units-select > unit-card {
-        width: 15%;
-        font-size: 2vw;
+    .units-select > .unit {
+        width: 10%;
         cursor: pointer;
     }
 
@@ -49,13 +50,7 @@
     }
 
     .units > div {
-        width: 15vw;
-    }
-
-    .units > div > card-stack {
-        position: absolute;
-        top: 7vh;
-        width: 15vw;
+        width: 18vw;
     }
 }
 
