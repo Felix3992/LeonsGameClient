@@ -16,7 +16,6 @@ sock.onmessage = (event) => {
             cards[card.ident] = Object.assign(new Card, card);
 
         return;
-        return create_stack();
     }
 
     if (event.data.startsWith("Units: ")) {
@@ -125,7 +124,7 @@ function start_game(opp_name, opp_units) {
     })
 
     set_names(selected_name, opp_name);
-    draw_board(80, 80, selected_units, opp_units);
+    // draw_board(80, 80, selected_units, opp_units);
 
-    document.getElementById("game").hidden = false;
+    document.getElementById("game").hidden= false;
 }

@@ -14,7 +14,7 @@ class AvailableCards {
 
         let units_id = this.player === "enemy" ? "opp_units" : "units";
 
-        let unit = document.getElementById(units_id).children[this.unit_num];
+        let unit = document.getElementById(units_id).getElementsByTagName("unit-card")[this.unit_num];
 
         if (this.stack_num >= 0) {
             return;

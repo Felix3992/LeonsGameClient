@@ -40,7 +40,7 @@ function handle_game_messages(message) {
             );
         }
 
-        draw_board(data["self"]["lives"], data["enemy"]["lives"], self_units, opp_units);
+        draw_board(data["self"]["lives"], data["enemy"]["lives"], self_units, opp_units, data["self"]["hand"], data["enemy"]["hand"]);
     }
 
     else
@@ -52,22 +52,29 @@ function set_names(self, opp) {
     document.getElementById("name").innerText = self;
 }
 
-function draw_board(self_lives, opp_lives, self_units, opp_units) {
+function draw_board(self_lives, opp_lives, self_units, opp_units, self_hand, opp_hand_count) {
     document.getElementById("lives").innerText = self_lives;
     document.getElementById("opp_lives").innerText = opp_lives;
 
-    let units_div = document.getElementById("units");
+    draw_units(self_units, "self");
+    draw_units(opp_units, "enemy");
+
+    draw_hand(self_hand);
+    // draw_hand(undefined, opp_hand_count);
+}
+
+function draw_units(units, player) {
+    let units_div = document.getElementById(player == "enemy" ? "opp_units" : "units");
     units_div.replaceChildren();
 
-    for (let unit of self_units) {
+    for (let unit of units) {
         let unit_card = document.createElement("unit-card");
 
         let unit_div = document.createElement("div");
-        unit_div.classList.add("h-100", "d-flex", "align-items-start", "flex-column");
-        unit_div.style.width = "8vw";
+        unit_div.classList.add("h-100", "d-flex", "align-items-" + (player == "enemy" ? "end" : "start"), "flex-column" + (player == "enemy" ? "-reverse" : ""));
+        unit_div.style.width = "7vw";
 
         unit_card.build(unit);
-
         unit_div.appendChild(unit_card);
 
         if (unit.stacks)
@@ -83,32 +90,88 @@ function draw_board(self_lives, opp_lives, self_units, opp_units) {
 
         units_div.appendChild(unit_div);
     }
+}
 
-    let opp_units_div = document.getElementById("opp_units");
-    opp_units_div.replaceChildren();
+function select_card(selected_card_num) {
+    let hand_div = document.getElementById("hand");
+    
+    let card_height = hand_div.clientWidth / 2 / (7 / 10);
+    let card_height_compacted = (hand_div.clientHeight - card_height) / (hand_div.children.length - 1);
+    
+    for (let i = 0; i < hand_div.children.length; i++) {
+        let stack_tag = hand_div.children[i];
 
-    for (let unit of opp_units) {
-        let unit_card = document.createElement("unit-card");
+        let translation;
+        if (i > selected_card_num)
+            translation = -i * (card_height - card_height_compacted) + (card_height - card_height_compacted);
+        else
+            translation = -i * (card_height - card_height_compacted);
 
-        let unit_div = document.createElement("div");
-        unit_div.classList.add("h-100", "d-flex", "align-items-end", "flex-column-reverse");
-        unit_div.style.width = "8vw";
-
-        unit_card.build(unit);
-        unit_div.appendChild(unit_card);
-
-        if (unit.stacks)
-            for (let stack of unit.stacks) {
-                if (!stack.card_ident)
-                    continue;
-
-                let card_stack = document.createElement("card-stack");
-                card_stack.build_only_artwork(stack);
-
-                unit_div.appendChild(card_stack)
-            }
-
-        opp_units_div.appendChild(unit_div);
+        stack_tag.style.transform = "translateY(" + translation + "px)";
     }
+}
 
+function deselect_card() {
+    let hand_div = document.getElementById("hand");
+    
+    let card_height = hand_div.clientWidth / 2 / (7 / 10);
+    let card_height_compacted = hand_div.clientHeight / hand_div.children.length;
+    
+    for (let i = 0; i < hand_div.children.length; i++) {
+        let translation = -i * (card_height - card_height_compacted);
+
+        hand_div.children[i].style.transform = "translateY(" + translation + "px)";
+    }
+}
+
+function draw_hand(hand, hand_count, selected_card_num) {
+    let hand_div = document.getElementById("hand");
+    hand_div.replaceChildren();
+    let enemy = false;
+
+    if (hand_count) {
+        hand = Array.from({length: hand_count}, "piracy");
+        enemy = true;
+    }
+    
+    let card_height = hand_div.clientWidth / 2 / (7 / 10);
+    let card_height_compacted;
+
+    if (selected_card_num)
+        card_height_compacted = (hand_div.clientHeight - card_height) / (hand.length - 1);
+    else
+        card_height_compacted = hand_div.clientHeight / hand.length;
+
+    for (let i = 0; i < hand.length; i++) {
+        let stack_tag = document.createElement("card-stack");
+        stack_tag.build(new Stack(hand[i], 1, false, true));
+        stack_tag.style.zIndex = i;
+        stack_tag.style.width = "50%";
+
+        let translation;
+        if (selected_card_num && i > selected_card_num)
+            translation = -i * (card_height - card_height_compacted) + (card_height - card_height_compacted);
+        else
+            translation = -i * (card_height - card_height_compacted);
+
+        stack_tag.style.transform = "translateY(" + translation + "px)";
+
+        if (!enemy)
+            stack_tag.onclick = () => {
+                if (!stack_tag.style.left || stack_tag.style.left === "0") {
+                    stack_tag.style.left = "25%";
+                    sock.send("play");
+                    sock.send(JSON.stringify([{card_num: i}]));
+                }
+                else {
+                    stack_tag.style.left = "0";
+                    sock.send("cancel");
+                }
+            };
+
+        stack_tag.onmouseover = () => select_card(i);
+        stack_tag.onmouseout = deselect_card;
+
+        hand_div.appendChild(stack_tag);
+    }
 }

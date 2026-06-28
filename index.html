@@ -25,19 +25,22 @@
       </div>
       <button class="btn btn-primary" type="button" onclick="ready_up()">Ready Up</button>
     </div>
-    <div id="game" hidden>
-      <div id="opp_field">
+    <div id="game" class="d-flex" hidden>
+      <div id="field" class="field">
+        <div style="height: 10%">
+          <span id="lives">80</span>
+          <h2 id="name">PLACEHOLDER</h2>
+        </div>
+        <div id="hand" class="w-100 d-flex flex-column overflow-hidden" style="height: 90%"></div>
+      </div>
+      <div class="units-field">
+        <div id="opp_units" class="units d-flex w-100 justify-content-center pb-3"></div>
+        <div id="units" class="units d-flex w-100 justify-content-center pt-3"></div>
+      </div>
+      <div id="opp_field" class="field">
         <div>
           <h2 id="opp_name">PLACEHOLDER</h2>
           <span id="opp_lives">80</span>
-        </div>
-        <div id="opp_units" class="units d-flex w-100 justify-content-center"></div>
-      </div>
-      <div id="field">
-        <div id="units" class="units d-flex w-100 justify-content-center"></div>
-        <div>
-          <span id="lives">80</span>
-          <h2 id="name">PLACEHOLDER</h2>
         </div>
       </div>
     </div>

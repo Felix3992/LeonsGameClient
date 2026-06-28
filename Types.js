@@ -13,11 +13,12 @@ class Card {
 
 class Unit {
 
-    constructor(ident, name, attack, block, stacks, included_cards) {
+    constructor(ident, name, attack, block, max_slots, stacks, included_cards) {
         this.ident = ident;
         this.name = name;
         this.attack = attack;
         this.block = block;
+        this.max_slots = max_slots;
         this.stacks = stacks;
         this.included_cards = included_cards;
     }
@@ -91,35 +92,24 @@ class Stack {
 
 class StackTag extends HTMLElement {
 
-    build(stack, player, stack_num) {
+    build(stack) {
         let card = cards[stack.card_ident];
-        this.classList.add("card", "p-absolute");
-        this.style.aspectRatio =  "7 / " + (2 * stack.count + 8);
+        this.classList.add("card");
+        this.style.aspectRatio =  "7 / 10";
         this.style.fontSize;
-        this.style.zIndex = -1 - stack_num;
 
-        let base_top = -50 - 70 * stack_num;
-        this.style.top = player == "enemy" ? -89 - 12 * stack.count + "%" : base_top + "%";
+        let header = document.createElement("div");
+        header.classList.add("card-header", "d-flex", "w-100", "p-0");
+        
+        let card_img = document.createElement("img");
+        card_img.classList.add("w-75");
+        // card_img.src = "assets/" + stack.card_ident + ".png";
+        card_img.src = "assets/attack_up.png";
+        header.appendChild(card_img);
 
-        if (player == "enemy")
-            for (let i = 0; i < stack.count; i++) {
-                let header = document.createElement("div");
-                header.classList.add("card-header", "d-flex", "w-100", "p-0");
-                
-                let card_img = document.createElement("img");
-                card_img.classList.add("w-75");
-                card_img.src = "assets/" + stack.card_ident + ".png";
+        this.append_stack_icon(stack, card, header);
 
-                let type_img = document.createElement("img");
-                type_img.classList.add("w-25");
-
-                this.append_stack_icon(stack, card, header);
-
-                header.appendChild(card_img);
-                header.appendChild(type_img);
-
-                this.append(header);
-            }
+        this.append(header);
 
         let body = document.createElement("div");
         body.classList.add("card-body");
@@ -140,27 +130,6 @@ class StackTag extends HTMLElement {
             footer.appendChild(stack_bonus_desc);
             this.appendChild(footer);
         }
-
-
-        if (player == "self")
-            for (let i = 0; i < stack.count; i++) {
-                let footer = document.createElement("div");
-                footer.classList.add("card-footer", "d-flex", "w-100", "p-0");
-                
-                let card_img = document.createElement("img");
-                card_img.classList.add("w-75");
-                card_img.src = "assets/" + stack.card_ident + ".png";
-
-                let type_img = document.createElement("img");
-                type_img.classList.add("w-25");
-
-                this.append_stack_icon(stack, card, footer);
-
-                footer.appendChild(card_img);
-                footer.appendChild(type_img);
-
-                this.append(footer);
-            }
     }
 
     build_only_artwork(stack) {
