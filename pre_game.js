@@ -80,10 +80,8 @@ function click_unit(card) {
 }
 
 function ready_up() {
-    set_name();
-    set_units();
-    set_deck();
-    sock.send('ready_up');
+    if (set_name() && set_units() && set_deck())
+        sock.send('ready_up');
 }
 
 function set_name() {
@@ -93,6 +91,7 @@ function set_name() {
 
     selected_name = name;
     sock.send('set_name: ' + name);
+    return true;
 }
 
 function set_units() {
@@ -100,6 +99,7 @@ function set_units() {
         return alert("select 3 units");
 
     sock.send("set_units: " + JSON.stringify(selected_units));
+    return true;
 }
 
 function set_deck() {
@@ -108,6 +108,7 @@ function set_deck() {
         return alert("Deck is required");
 
     sock.send('set_deck: ' + deck);
+    return true;
 }
 
 function start_game(opp_name, opp_units) {
@@ -126,5 +127,5 @@ function start_game(opp_name, opp_units) {
     set_names(selected_name, opp_name);
     // draw_board(80, 80, selected_units, opp_units);
 
-    document.getElementById("game").hidden= false;
+    document.getElementById("game").classList.remove("d-none");
 }

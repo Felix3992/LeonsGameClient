@@ -1,11 +1,12 @@
 class Card {
 
-    constructor(ident, name, description, card_type, stack_count, stack_bonus_desc) {
+    constructor(ident, name, description, card_type, stack_count, activation_bonus_desc, stack_bonus_desc) {
         this.ident = ident;
         this.name = name;
         this.description = description;
         this.card_type = card_type;
         this.stack_count = stack_count;
+        this.activation_bonus_desc = activation_bonus_desc;
         this.stack_bonus_desc = stack_bonus_desc;
     }
 
@@ -13,12 +14,11 @@ class Card {
 
 class Unit {
 
-    constructor(ident, name, attack, block, max_slots, stacks, included_cards) {
+    constructor(ident, name, attack, block, stacks, included_cards) {
         this.ident = ident;
         this.name = name;
         this.attack = attack;
         this.block = block;
-        this.max_slots = max_slots;
         this.stacks = stacks;
         this.included_cards = included_cards;
     }
@@ -124,12 +124,22 @@ class StackTag extends HTMLElement {
             let footer = document.createElement("div");
             footer.classList.add("card-footer");
         
-            let stack_bonus_desc = document.createElement("span");
-            stack_bonus_desc.innerText = card.stack_bonus_desc;
+            let bonus_desc = document.createElement("span");
+            if (card.stack_bonus_desc)
+                bonus_desc.innerText = card.stack_bonus_desc;
+            else if (card.activation_bonus_desc)
+                bonus_desc.innerText = card.activation_bonus_desc;
 
-            footer.appendChild(stack_bonus_desc);
+            footer.appendChild(bonus_desc);
             this.appendChild(footer);
         }
+    }
+
+    build_card_back() {
+        this.classList.add("card");
+        this.style.aspectRatio =  "7 / 10";
+        this.style.backgroundImage = "url(assets/cardback.png)";
+        this.style.backgroundSize = "cover";
     }
 
     build_only_artwork(stack) {
@@ -146,6 +156,17 @@ class StackTag extends HTMLElement {
         header.appendChild(card_img);
 
         this.append_stack_icon(stack, card, header);
+
+        this.append(header);
+    }
+
+    build_empty() {
+        this.classList.add("my-2", "w-100");
+
+        let header = document.createElement("div");
+        header.classList.add("w-100", "p-0");
+        header.style.aspectRatio = "4 / 1";
+        header.style.border = "0.15vw dashed black";
 
         this.append(header);
     }

@@ -7,23 +7,28 @@ class AvailableCards {
     action
 
     highlight() {
+        let card;
 
         if (this.card_num >= 0) {
-            return;
+            let hand_id = this.player === "enemy" ? "opp_hand" : "hand";
+
+            card = document.getElementById(hand_id).getElementsByTagName("card-stack")[this.card_num];
+        }
+        else {
+            let units_id = this.player === "enemy" ? "opp_units" : "units";
+
+            let unit = document.getElementById(units_id).getElementsByTagName("unit-card")[this.unit_num];
+
+            if (this.stack_num >= 0)
+                card = unit.parentElement.children[this.stack_num + 1];
+            else
+                card = unit;
         }
 
-        let units_id = this.player === "enemy" ? "opp_units" : "units";
+        card.style.cursor = "pointer";
+        card.style.border = "yellow dashed 0.5vw";
 
-        let unit = document.getElementById(units_id).getElementsByTagName("unit-card")[this.unit_num];
-
-        if (this.stack_num >= 0) {
-            return;
-        }
-
-        unit.style.cursor = "pointer";
-        unit.style.border = "yellow dashed 0.5vw";
-
-        unit.onclick = () => this.action.select(this);
+        card.onclick = () => this.action.select(this);
     }
 
 }

@@ -25,24 +25,32 @@
       </div>
       <button class="btn btn-primary" type="button" onclick="ready_up()">Ready Up</button>
     </div>
-    <div id="game" class="d-flex" hidden>
+    <div id="game" class="d-none d-flex">
       <div id="field" class="field">
         <div style="height: 10%">
-          <span id="lives">80</span>
           <h2 id="name">PLACEHOLDER</h2>
+          <h3 id="lives">80</h3>
         </div>
         <div id="hand" class="w-100 d-flex flex-column overflow-hidden" style="height: 90%"></div>
       </div>
-      <div class="units-field">
-        <div id="opp_units" class="units d-flex w-100 justify-content-center pb-3"></div>
-        <div id="units" class="units d-flex w-100 justify-content-center pt-3"></div>
-      </div>
-      <div id="opp_field" class="field">
-        <div>
-          <h2 id="opp_name">PLACEHOLDER</h2>
-          <span id="opp_lives">80</span>
+      <div class="flex-grow-1"></div>
+      <div class="d-flex">
+        <div class="d-flex flex-column">
+          <div id="opp_units" class="units d-flex w-100 justify-content-center pb-3"></div>
+          <button class="btn btn-danger w-25 align-self-center" onclick="sock.send('attack')" type="button" style="height: 5vh">Attack</button>
+          <div id="units" class="units d-flex w-100 justify-content-center pt-3"></div>
         </div>
       </div>
+      <div class="flex-grow-1"></div>
+      <div id="opp_field" class="field">
+        <div style="height: 10%">
+          <h2 id="opp_name" class="text-end">PLACEHOLDER</h2>
+          <h3 id="opp_lives" class="text-end">80</h3>
+        </div>
+        <div id="opp_hand" class="w-100 d-flex flex-column overflow-hidden align-items-end" style="height: 90%"></div>
+      </div>
     </div>
+    <input id="get_card" placeholder="Get ...">
+    <button onclick="sock.send('get'); sock.send(document.getElementById('get_card').value)">Get Card</button>
   </body>
 </html>

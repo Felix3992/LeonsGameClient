@@ -1,5 +1,3 @@
-play = () => sock.send("play"); card = (i) => sock.send(JSON.stringify([{card_num: i}])); hand = () => sock.send("hand");
-
 function handle_game_messages(message) {
     if (message.startsWith("board: ")) {
         let data = JSON.parse(message.substring("board: ".length));
@@ -50,6 +48,9 @@ function handle_game_messages(message) {
 function set_names(self, opp) {
     document.getElementById("opp_name").innerText = opp;
     document.getElementById("name").innerText = self;
+
+    const resizeObserver = new ResizeObserver(() => {deselect_card(); deselect_card(true)});
+    resizeObserver.observe(document.getElementById("hand"));
 }
 
 function draw_board(self_lives, opp_lives, self_units, opp_units, self_hand, opp_hand_count) {
@@ -60,7 +61,7 @@ function draw_board(self_lives, opp_lives, self_units, opp_units, self_hand, opp
     draw_units(opp_units, "enemy");
 
     draw_hand(self_hand);
-    // draw_hand(undefined, opp_hand_count);
+    draw_hand(undefined, opp_hand_count);
 }
 
 function draw_units(units, player) {
@@ -72,20 +73,21 @@ function draw_units(units, player) {
 
         let unit_div = document.createElement("div");
         unit_div.classList.add("h-100", "d-flex", "align-items-" + (player == "enemy" ? "end" : "start"), "flex-column" + (player == "enemy" ? "-reverse" : ""));
-        unit_div.style.width = "7vw";
+        unit_div.style.width = "8vw";
 
         unit_card.build(unit);
         unit_div.appendChild(unit_card);
 
         if (unit.stacks)
             for (let stack of unit.stacks) {
-                if (!stack.card_ident)
-                    continue;
-
                 let card_stack = document.createElement("card-stack");
-                card_stack.build_only_artwork(stack);
 
-                unit_div.appendChild(card_stack)
+                if (!stack.card_ident)
+                    card_stack.build_empty();
+                else 
+                    card_stack.build_only_artwork(stack);
+
+                unit_div.appendChild(card_stack);
             }
 
         units_div.appendChild(unit_div);
@@ -111,8 +113,12 @@ function select_card(selected_card_num) {
     }
 }
 
-function deselect_card() {
-    let hand_div = document.getElementById("hand");
+function deselect_card(enemy = false) {
+    let hand_div;
+    if (enemy)
+        hand_div = document.getElementById("hand");
+    else
+        hand_div = document.getElementById("opp_hand");
     
     let card_height = hand_div.clientWidth / 2 / (7 / 10);
     let card_height_compacted = hand_div.clientHeight / hand_div.children.length;
@@ -125,43 +131,46 @@ function deselect_card() {
 }
 
 function draw_hand(hand, hand_count, selected_card_num) {
-    let hand_div = document.getElementById("hand");
-    hand_div.replaceChildren();
     let enemy = false;
 
     if (hand_count) {
-        hand = Array.from({length: hand_count}, "piracy");
+        hand = Array.from({length: hand_count}, () => "");
         enemy = true;
     }
+
+    if (!hand)
+        return;
+
+    let hand_div;
+    if (enemy)
+        hand_div = document.getElementById("opp_hand");
+    else
+        hand_div = document.getElementById("hand");
+
+    hand_div.replaceChildren();
     
     let card_height = hand_div.clientWidth / 2 / (7 / 10);
-    let card_height_compacted;
-
-    if (selected_card_num)
-        card_height_compacted = (hand_div.clientHeight - card_height) / (hand.length - 1);
-    else
-        card_height_compacted = hand_div.clientHeight / hand.length;
+    let card_height_compacted = hand_div.clientHeight / hand.length;
 
     for (let i = 0; i < hand.length; i++) {
         let stack_tag = document.createElement("card-stack");
-        stack_tag.build(new Stack(hand[i], 1, false, true));
+        if (!enemy)
+            stack_tag.build(new Stack(hand[i], 1, false, true));
+        else
+            stack_tag.build_card_back();
+
         stack_tag.style.zIndex = i;
         stack_tag.style.width = "50%";
 
-        let translation;
-        if (selected_card_num && i > selected_card_num)
-            translation = -i * (card_height - card_height_compacted) + (card_height - card_height_compacted);
-        else
-            translation = -i * (card_height - card_height_compacted);
+        let translation = -i * (card_height - card_height_compacted);
 
         stack_tag.style.transform = "translateY(" + translation + "px)";
 
-        if (!enemy)
+        if (!enemy) {
             stack_tag.onclick = () => {
                 if (!stack_tag.style.left || stack_tag.style.left === "0") {
                     stack_tag.style.left = "25%";
-                    sock.send("play");
-                    sock.send(JSON.stringify([{card_num: i}]));
+                    sock.send("play;" + JSON.stringify({card_num: i}));
                 }
                 else {
                     stack_tag.style.left = "0";
@@ -169,8 +178,9 @@ function draw_hand(hand, hand_count, selected_card_num) {
                 }
             };
 
-        stack_tag.onmouseover = () => select_card(i);
-        stack_tag.onmouseout = deselect_card;
+            stack_tag.onmouseover = () => select_card(i);
+            stack_tag.onmouseout = deselect_card;
+        }
 
         hand_div.appendChild(stack_tag);
     }
