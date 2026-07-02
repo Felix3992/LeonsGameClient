@@ -38,7 +38,7 @@ function handle_game_messages(message) {
             );
         }
 
-        draw_board(data["self"]["lives"], data["enemy"]["lives"], self_units, opp_units, data["self"]["hand"], data["enemy"]["hand"]);
+        draw_board(data["self"]["lives"], data["enemy"]["lives"], self_units, opp_units, data["self"]["hand"], data["enemy"]["hand"], data["self"]["discard_pile"], data["enemy"]["discard_pile"]);
     }
 
     else
@@ -53,7 +53,7 @@ function set_names(self, opp) {
     resizeObserver.observe(document.getElementById("hand"));
 }
 
-function draw_board(self_lives, opp_lives, self_units, opp_units, self_hand, opp_hand_count) {
+function draw_board(self_lives, opp_lives, self_units, opp_units, self_hand, opp_hand_count, self_discard_pile, opp_discard_pile) {
     document.getElementById("lives").innerText = self_lives;
     document.getElementById("opp_lives").innerText = opp_lives;
 
@@ -62,6 +62,9 @@ function draw_board(self_lives, opp_lives, self_units, opp_units, self_hand, opp
 
     draw_hand(self_hand);
     draw_hand(undefined, opp_hand_count);
+
+    draw_discard_pile("discard_pile", self_discard_pile);
+    draw_discard_pile("opp_discard_pile", opp_discard_pile);
 }
 
 function draw_units(units, player) {
@@ -184,4 +187,28 @@ function draw_hand(hand, hand_count, selected_card_num) {
 
         hand_div.appendChild(stack_tag);
     }
+}
+
+function draw_discard_pile(pile_id, discard_pile) {
+    let top_card = document.getElementById(pile_id + "_card");
+
+    if (top_card)
+        top_card.remove();
+
+    if (discard_pile.length > 0) {
+        let pile = document.getElementById(pile_id);
+        document.getElementById(pile_id + "_empty").setAttribute("hidden", true);
+
+        let top_card = document.createElement("card-stack");
+        top_card.build(new Stack(discard_pile[discard_pile.length - 1], 1, false, true));
+        top_card.id = pile_id + "_card";
+        top_card.classList.add("w-75");
+
+        if (discard_pile.length > 1)
+            top_card.classList.add("shadow-lg");
+
+        pile.appendChild(top_card);
+    }
+    else
+        document.getElementById(pile_id + "_empty").removeAttribute("hidden");
 }

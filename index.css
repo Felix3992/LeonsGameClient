@@ -47,6 +47,10 @@
     .units > div {
         width: 18vw;
     }
+
+    .discard_pile {
+        flex: 1;
+    }
 }
 
 @media (width < 1200px) {

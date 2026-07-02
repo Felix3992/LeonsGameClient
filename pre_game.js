@@ -125,7 +125,7 @@ function start_game(opp_name, opp_units) {
     })
 
     set_names(selected_name, opp_name);
-    // draw_board(80, 80, selected_units, opp_units);
+    draw_board(80, 80, selected_units, opp_units, [], 0, [], []);
 
     document.getElementById("game").classList.remove("d-none");
 }

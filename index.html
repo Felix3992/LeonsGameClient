@@ -33,7 +33,9 @@
         </div>
         <div id="hand" class="w-100 d-flex flex-column overflow-hidden" style="height: 90%"></div>
       </div>
-      <div class="flex-grow-1"></div>
+      <div id="discard_pile" class="discard_pile d-flex flex-column align-items-center justify-content-center">
+        <card-stack id="discard_pile_empty" class="card w-75" style="aspect-ratio: 7 / 10; border: 0.15vw dashed;"></card-stack>
+      </div>
       <div class="d-flex">
         <div class="d-flex flex-column">
           <div id="opp_units" class="units d-flex w-100 justify-content-center pb-3"></div>
@@ -41,7 +43,9 @@
           <div id="units" class="units d-flex w-100 justify-content-center pt-3"></div>
         </div>
       </div>
-      <div class="flex-grow-1"></div>
+      <div id="opp_discard_pile" class="discard_pile d-flex flex-column align-items-center justify-content-center">
+        <card-stack id="opp_discard_pile_empty" class="card w-75" style="aspect-ratio: 7 / 10; border: 0.15vw dashed;"></card-stack>
+      </div>
       <div id="opp_field" class="field">
         <div style="height: 10%">
           <h2 id="opp_name" class="text-end">PLACEHOLDER</h2>
