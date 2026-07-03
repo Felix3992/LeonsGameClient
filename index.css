@@ -1,10 +1,10 @@
+.flex-1 {
+    flex: 1;
+}
+
 @media screen and (width >= 1200px) {
     #game {
         height: 100vh;
-    }
-
-    .units {
-        height: 80%;
     }
 
     #units_select {
@@ -46,10 +46,6 @@
 
     .units > div {
         width: 18vw;
-    }
-
-    .discard_pile {
-        flex: 1;
     }
 }
 
