@@ -1,80 +1,43 @@
-function handle_game_messages(message) {
+function handle_game_messages(message: string) {
     if (message.startsWith("board: ")) {
-        let data = JSON.parse(message.substring("board: ".length));
-
-        let opp_units = [];
-        for (let i = 0; i < data["enemy"]["units"].length; i++) {
-            let unit = data["enemy"]["units"][i];
-            let stacks = [];
-
-            for (let j = 0; j < unit.stacks.length; j++) {
-                let stack = unit.stacks[j];
-
-                stacks.push(
-                    new Stack(stack["ident"], stack["count"], stack["stack_bonus"], stack["active"])
-                );
-            }
-
-            opp_units.push(
-                new Unit(unit["ident"], unit["name"], unit["attack"], unit["block"], stacks)
-            );
-        }
-
-        let self_units = [];
-        for (let i = 0; i < data["self"]["units"].length; i++) {
-            let unit = data["self"]["units"][i];
-            let stacks = [];
-
-            for (let j = 0; j < unit.stacks.length; j++) {
-                let stack = unit.stacks[j];
-
-                stacks.push(
-                    new Stack(stack["ident"], stack["count"], stack["stack_bonus"], stack["active"])
-                );
-            }
-
-            self_units.push(
-                new Unit(unit["ident"], unit["name"], unit["attack"], unit["block"], stacks)
-            );
-        }
-
-        draw_board(data["self"]["lives"], data["enemy"]["lives"], self_units, opp_units, data["self"]["hand"], data["enemy"]["hand"], data["self"]["discard_pile"], data["enemy"]["discard_pile"], data["game"]["turn_number"], data["game"]["current_unit_slot"], data["game"]["self_turn"]);
+        let board: Board = JSON.parse(message.substring("board: ".length));
+        draw_board(board);
     }
 
     else
         handle_actions(message);
 }
 
-function set_names(self, opp) {
-    document.getElementById("opp_name").innerText = opp;
-    document.getElementById("name").innerText = self;
+function set_names(self: string, opp: string) {
+    document.getElementById("opp_name")!.innerText = opp;
+    document.getElementById("name")!.innerText = self;
 
     const resizeObserver = new ResizeObserver(() => {deselect_card(); deselect_card(true)});
-    resizeObserver.observe(document.getElementById("hand"));
+    resizeObserver.observe(document.getElementById("hand")!);
 }
 
-function draw_board(self_lives, opp_lives, self_units, opp_units, self_hand, opp_hand_count, self_discard_pile, opp_discard_pile, turn_number, current_unit_slot, self_turn) {
-    document.getElementById("turn_number").innerText = "Turn: " + (turn_number + 1);
-    document.getElementById("lives").innerText = self_lives;
-    document.getElementById("opp_lives").innerText = opp_lives;
+function draw_board(board: Board) {
+    document.getElementById("turn_number")!.innerText = "Turn: " + (board.game.turn_number + 1);
+    document.getElementById("lives")!.innerText = String(board.self.lives);
+    document.getElementById("opp_lives")!.innerText = String(board.enemy.lives);
 
-    draw_units(self_units, "self", self_turn === true ? current_unit_slot : undefined);
-    draw_units(opp_units, "enemy", self_turn === false ? current_unit_slot : undefined);
+    draw_units(board.self.units, "self", board.game.self_turn === true ? board.game.current_unit_slot : undefined);
+    draw_units(board.enemy.units, "enemy", board.game.self_turn === false ? board.game.current_unit_slot : undefined);
 
-    draw_hand(self_hand);
-    draw_hand(undefined, opp_hand_count);
+    draw_hand(board.self.hand);
+    draw_hand([], board.enemy.hand);
 
-    draw_discard_pile("discard_pile", self_discard_pile);
-    draw_discard_pile("opp_discard_pile", opp_discard_pile);
+    draw_discard_pile("discard_pile", board.self.discard_pile);
+    draw_discard_pile("opp_discard_pile", board.enemy.discard_pile);
 }
 
-function draw_units(units, player, current_unit_slot) {
-    let units_div = document.getElementById(player == "enemy" ? "opp_units" : "units");
+function draw_units(units: Unit[], player: "enemy" | "self", current_unit_slot?: number) {
+    let units_div = document.getElementById(player == "enemy" ? "opp_units" : "units")!;
     units_div.replaceChildren();
 
     for (let i = 0; i < units.length; i++) {
         let unit = units[i];
-        let unit_card = document.createElement("unit-card");
+        let unit_card = document.createElement("unit-card") as UnitTag;
 
         let unit_div = document.createElement("div");
         unit_div.classList.add("d-flex", "align-items-" + (player == "enemy" ? "end" : "start"), "flex-column" + (player == "enemy" ? "-reverse" : ""));
@@ -93,9 +56,9 @@ function draw_units(units, player, current_unit_slot) {
 
         if (unit.stacks)
             for (let stack of unit.stacks) {
-                let card_stack = document.createElement("card-stack");
+                let card_stack = document.createElement("card-stack") as StackTag;
 
-                if (!stack.card_ident)
+                if (!stack.ident)
                     card_stack.build_empty();
                 else 
                     card_stack.build_only_artwork(stack);
@@ -107,14 +70,14 @@ function draw_units(units, player, current_unit_slot) {
     }
 }
 
-function select_card(selected_card_num) {
-    let hand_div = document.getElementById("hand");
+function select_card(selected_card_num: number) {
+    let hand_div = document.getElementById("hand")!;
     
     let card_height = hand_div.clientWidth / 2 / (7 / 10);
     let card_height_compacted = (hand_div.clientHeight - card_height) / (hand_div.children.length - 1);
     
     for (let i = 0; i < hand_div.children.length; i++) {
-        let stack_tag = hand_div.children[i];
+        let stack_tag: StackTag = hand_div.children[i] as StackTag;
 
         let translation;
         if (i > selected_card_num)
@@ -126,12 +89,12 @@ function select_card(selected_card_num) {
     }
 }
 
-function deselect_card(enemy = false) {
+function deselect_card(enemy: boolean = false) {
     let hand_div;
-    if (enemy)
-        hand_div = document.getElementById("hand");
+    if (!enemy)
+        hand_div = document.getElementById("hand")!;
     else
-        hand_div = document.getElementById("opp_hand");
+        hand_div = document.getElementById("opp_hand")!;
     
     let card_height = hand_div.clientWidth / 2 / (7 / 10);
     let card_height_compacted = hand_div.clientHeight / hand_div.children.length;
@@ -139,14 +102,14 @@ function deselect_card(enemy = false) {
     for (let i = 0; i < hand_div.children.length; i++) {
         let translation = -i * (card_height - card_height_compacted);
 
-        hand_div.children[i].style.transform = "translateY(" + translation + "px)";
+        (hand_div.children[i] as HTMLElement).style.transform = "translateY(" + translation + "px)";
     }
 }
 
-function draw_hand(hand, hand_count, selected_card_num) {
+function draw_hand(hand: string[], hand_count?: number) {
     let enemy = false;
 
-    if (hand_count) {
+    if (hand_count !== undefined) {
         hand = Array.from({length: hand_count}, () => "");
         enemy = true;
     }
@@ -156,9 +119,9 @@ function draw_hand(hand, hand_count, selected_card_num) {
 
     let hand_div;
     if (enemy)
-        hand_div = document.getElementById("opp_hand");
+        hand_div = document.getElementById("opp_hand")!;
     else
-        hand_div = document.getElementById("hand");
+        hand_div = document.getElementById("hand")!;
 
     hand_div.replaceChildren();
     
@@ -166,13 +129,13 @@ function draw_hand(hand, hand_count, selected_card_num) {
     let card_height_compacted = hand_div.clientHeight / hand.length;
 
     for (let i = 0; i < hand.length; i++) {
-        let stack_tag = document.createElement("card-stack");
+        let stack_tag: StackTag = document.createElement("card-stack") as StackTag;
         if (!enemy)
             stack_tag.build(new Stack(hand[i], 1, false, true));
         else
             stack_tag.build_card_back();
 
-        stack_tag.style.zIndex = i;
+        stack_tag.style.zIndex = String(i);
         stack_tag.style.width = "50%";
 
         let translation = -i * (card_height - card_height_compacted);
@@ -192,24 +155,24 @@ function draw_hand(hand, hand_count, selected_card_num) {
             };
 
             stack_tag.onmouseover = () => select_card(i);
-            stack_tag.onmouseout = deselect_card;
+            stack_tag.onmouseout = () => deselect_card();
         }
 
         hand_div.appendChild(stack_tag);
     }
 }
 
-function draw_discard_pile(pile_id, discard_pile) {
+function draw_discard_pile(pile_id: "discard_pile" | "opp_discard_pile", discard_pile: string[]) {
     let top_card = document.getElementById(pile_id + "_card");
 
     if (top_card)
         top_card.remove();
 
     if (discard_pile.length > 0) {
-        let pile = document.getElementById(pile_id);
-        document.getElementById(pile_id + "_empty").setAttribute("hidden", true);
+        let pile = document.getElementById(pile_id)!;
+        document.getElementById(pile_id + "_empty")!.setAttribute("hidden", "");
 
-        let top_card = document.createElement("card-stack");
+        let top_card: StackTag = document.createElement("card-stack") as StackTag;
         top_card.build(new Stack(discard_pile[discard_pile.length - 1], 1, false, true));
         top_card.id = pile_id + "_card";
         top_card.classList.add("w-75");
@@ -222,5 +185,5 @@ function draw_discard_pile(pile_id, discard_pile) {
         pile.appendChild(top_card);
     }
     else
-        document.getElementById(pile_id + "_empty").removeAttribute("hidden");
+        document.getElementById(pile_id + "_empty")!.removeAttribute("hidden");
 }

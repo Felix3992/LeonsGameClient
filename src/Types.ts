@@ -1,46 +1,114 @@
+class Board {
+
+    game: {
+        self_turn?: boolean,
+        turn_number: number,
+        current_unit_slot: number
+    }
+    enemy: {
+        lives: number
+        units: Unit[],
+        hand: number,
+        discard_pile: string[]
+    }
+    self: {
+        lives: number,
+        units: Unit[],
+        hand: string[],
+        discard_pile: string[]
+    }
+
+    constructor(game: any, enemy: any, self: any) {
+        this.game = game;
+        this.enemy = enemy;
+        this.self = self;
+    }
+
+}
+
 class Card {
 
-    constructor(ident, name, description, card_type, stack_count, activation_bonus_desc, stack_bonus_desc) {
+    ident: string
+    name: string
+    description: string
+    card_type: "stack" | "slide_down_stack" | "download" | "one_time_use"
+    stack_count: number = -1
+    activation_bonus_desc: string = ""
+    stack_bonus_desc: string = ""
+
+    constructor(ident: string, name: string, description: string, card_type: "stack" | "slide_down_stack" | "download" | "one_time_use", stack_count?: number, activation_bonus_desc?: string, stack_bonus_desc?: string) {
         this.ident = ident;
         this.name = name;
         this.description = description;
         this.card_type = card_type;
-        this.stack_count = stack_count;
-        this.activation_bonus_desc = activation_bonus_desc;
-        this.stack_bonus_desc = stack_bonus_desc;
+
+        if (stack_count) this.stack_count = stack_count;
+        if (activation_bonus_desc) this.activation_bonus_desc = activation_bonus_desc;
+        if (stack_bonus_desc) this.stack_bonus_desc = stack_bonus_desc;
     }
 
 }
 
 class Unit {
 
-    constructor(ident, name, attack, block, stacks, included_cards) {
+    ident: string
+    name: string
+    attack: number
+    block: number
+    stacks: Stack[]
+    included_cards: string[] = []
+
+    constructor(ident: string, name: string, attack: number, block: number, stacks: Array<Stack>, included_cards?: Array<string>) {
         this.ident = ident;
         this.name = name;
         this.attack = attack;
         this.block = block;
         this.stacks = stacks;
-        this.included_cards = included_cards;
+
+        if (included_cards) this.included_cards = included_cards;
+    }
+
+}
+
+class Deck {
+
+    ident: string
+    name: string
+    cards: string[]
+
+    constructor(ident: string, name: string, cards: string[]) {
+        this.ident = ident;
+        this.name = name;
+        this.cards = cards;
+    }
+
+}
+
+class Stack {
+
+    ident: string
+    count: number = 1
+    stack_bonus: boolean = false
+    active: boolean = true
+
+    constructor(ident: string, count?: number, stack_bonus?: boolean, active?: boolean) {
+        this.ident = ident;
+        if (count) this.count = count;
+        if (stack_bonus) this.stack_bonus = stack_bonus;
+        if (active) this.active = active;
     }
 
 }
 
 class UnitTag extends HTMLElement {
 
-    build(unit, is_selectable = false) {    
+    ident: string = ""
+
+    build(unit: Unit) {    
         this.ident = unit.ident;
         this.classList.add("unit", "card", "bg-transparent", "rounded-3");
         this.style = "background-image: url('assets/" + unit.ident + ".png');";
         this.style.backgroundSize = "cover";
-        if (is_selectable) {
-            this.onclick = () => click_unit(this);
-
-            let num_span = document.createElement("span");
-            num_span.id = unit.ident + "_num";
-            num_span.classList.add("position-absolute", "top-0", "start-100", "translate-middle", "badge", "rouded-pill", "bg-danger");
-            num_span.hidden = true;
-            this.appendChild(num_span);
-        }
 
         let name_span = document.createElement("span");
         name_span.classList.add("card-title", "align-self-center", "text-center", "text-nowrap");
@@ -53,11 +121,11 @@ class UnitTag extends HTMLElement {
 
         let attack_span = document.createElement("span");
         attack_span.classList.add("fw-bold", "align-self-end", "flex-grow-1");
-        attack_span.innerText = unit.attack;
+        attack_span.innerText = String(unit.attack);
 
         let block_span = document.createElement("span");
         block_span.classList.add("fw-bold", "align-self-end");
-        block_span.innerText = unit.block;
+        block_span.innerText = String(unit.block);
 
         this.appendChild(name_span);
         this.appendChild(card_body);
@@ -69,31 +137,10 @@ class UnitTag extends HTMLElement {
 }
 customElements.define("unit-card", UnitTag);
 
-class Deck {
-
-    constructor(ident, name, cards) {
-        this.ident = ident;
-        this.name = name;
-        this.cards = cards;
-    }
-
-}
-
-class Stack {
-
-    constructor(card_ident, count, stack_bonus, active) {
-        this.card_ident = card_ident;
-        this.count = count;
-        this.stack_bonus = stack_bonus;
-        this.active = active;
-    }
-
-}
-
 class StackTag extends HTMLElement {
 
-    build(stack) {
-        let card = cards[stack.card_ident];
+    build(stack: Stack) {
+        let card: Card = cards[stack.ident];
         this.classList.add("card");
         this.style.aspectRatio =  "7 / 10";
         this.style.fontSize;
@@ -142,8 +189,8 @@ class StackTag extends HTMLElement {
         this.style.backgroundSize = "cover";
     }
 
-    build_only_artwork(stack) {
-        let card = cards[stack.card_ident];
+    build_only_artwork(stack: Stack) {
+        let card = cards[stack.ident];
         this.classList.add("my-2", "w-100");
 
         let header = document.createElement("div");
@@ -151,7 +198,7 @@ class StackTag extends HTMLElement {
         
         let card_img = document.createElement("img");
         card_img.classList.add("w-75");
-        card_img.src = "assets/" + stack.card_ident + ".png";
+        card_img.src = "assets/" + stack.ident + ".png";
 
         header.appendChild(card_img);
 
@@ -171,7 +218,7 @@ class StackTag extends HTMLElement {
         this.append(header);
     }
 
-    append_stack_icon(stack, card, header) {
+    append_stack_icon(stack: Stack, card: Card, header: HTMLElement) {
         if (card.stack_count > 0) {
             let stack_div = document.createElement("div");
             stack_div.classList.add("w-25", "d-flex", "align-items-center");
@@ -180,7 +227,7 @@ class StackTag extends HTMLElement {
             let current_span = document.createElement("span");
             current_span.style.alignSelf = "start";
             current_span.style.padding = "2px 0 0 2px";
-            current_span.innerText = stack.count;
+            current_span.innerText = String(stack.count);
 
             let divider = document.createElement("div");
             divider.classList.add("w-100");
@@ -191,7 +238,7 @@ class StackTag extends HTMLElement {
             let count_span = document.createElement("span");
             count_span.style.alignSelf = "end";
             count_span.style.padding = "0 2px 2px 0";
-            count_span.innerText = card.stack_count;
+            count_span.innerText = String(card.stack_count);
 
             stack_div.appendChild(current_span);
             stack_div.appendChild(divider);
