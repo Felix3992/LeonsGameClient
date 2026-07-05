@@ -47,6 +47,19 @@
     .units > div {
         width: 18vw;
     }
+
+    .empty-stack {
+        aspect-ratio: 7 / 10;
+        border: 0.15vw dashed;
+    }
+
+    .hand {
+        height: 90%;
+    }
+
+    #attack_btn {
+        height: 5vh;
+    }
 }
 
 @media (width < 1200px) {

@@ -20,6 +20,11 @@ function draw_board(board: Board) {
     document.getElementById("turn_number")!.innerText = "Turn: " + (board.game.turn_number + 1);
     document.getElementById("lives")!.innerText = String(board.self.lives);
     document.getElementById("opp_lives")!.innerText = String(board.enemy.lives);
+    
+    if (board.game.self_turn)
+        document.getElementById("attack_btn")!.removeAttribute("disabled");
+    else
+        document.getElementById("attack_btn")!.setAttribute("disabled", "");
 
     draw_units(board.self.units, "self", board.game.self_turn === true ? board.game.current_unit_slot : undefined);
     draw_units(board.enemy.units, "enemy", board.game.self_turn === false ? board.game.current_unit_slot : undefined);

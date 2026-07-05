@@ -161,13 +161,17 @@ class StackTag extends HTMLElement {
         let body = document.createElement("div");
         body.classList.add("card-body");
 
+        let name = document.createElement("h5");
+        name.innerText = card.name;
+
         let description = document.createElement("span");
         description.innerText = card.description;
 
+        body.appendChild(name);
         body.appendChild(description);
         this.appendChild(body);
 
-        if (card.stack_bonus_desc) {
+        if (card.stack_bonus_desc || card.activation_bonus_desc) {
             let footer = document.createElement("div");
             footer.classList.add("card-footer");
         
@@ -192,6 +196,11 @@ class StackTag extends HTMLElement {
     build_only_artwork(stack: Stack) {
         let card = cards[stack.ident];
         this.classList.add("my-2", "w-100");
+
+        if (stack.stack_bonus && card.stack_bonus_desc) {
+            this.style.outline = "0.15vw solid gold";
+            this.style.zIndex = "1";
+        }
 
         let header = document.createElement("div");
         header.classList.add("d-flex", "w-100", "p-0");
