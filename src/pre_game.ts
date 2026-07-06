@@ -1,4 +1,4 @@
-const sock = new WebSocket("ws://localhost:9999/");
+const sock = new WebSocket("wss://lon.run.place:9999/");
 const cards: { [key: string]: Card } = {};
 const units: { [key: string]: Unit } = {};
 const decks: Deck[] = [];

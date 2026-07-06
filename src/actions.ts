@@ -36,9 +36,8 @@ class AvailableCard {
 
 class Action {
 
-    count: number = -1
     available_cards: AvailableCard[] = []
-    selected_cards: AvailableCard[] = []
+    selected_card?: AvailableCard
 
     setup_cards() {
         let available_cards = [];
@@ -52,13 +51,10 @@ class Action {
     }
 
     select(available_card: AvailableCard) {
-        this.selected_cards.push(available_card);
-
-        if (this.selected_cards.length >= this.count) {
-            for (let card of this.selected_cards)
-                card.action = undefined;
-
-            sock.send(JSON.stringify(this.selected_cards));
+        if (!this.selected_card) {
+            this.selected_card = available_card;
+            available_card.action = undefined;
+            sock.send(JSON.stringify(available_card));
         }
     }
 
