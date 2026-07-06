@@ -58,6 +58,13 @@
         <div id="opp_hand" class="hand w-100 d-flex flex-column overflow-hidden align-items-end"></div>
       </div>
     </div>
+    <div id="overlays" class="w-100 h-100 position-absolute top-0" hidden>
+      <div class="w-100 h-100 position-absolute top-0 bg-black opacity-50"></div>
+      <div class="dice-container position-relative">
+        <div id="dice">20</div>
+      </div>
+      <button id="cancel-roll-btn" class="btn btn-danger position-relative" type="button" onclick="sock.send('cancel')">Cancel</button>
+    </div>
     <div id="debug" hidden>
       <input id="get_card" placeholder="Get ...">
       <button onclick="sock.send('get'); sock.send(document.getElementById('get_card').value)">Get Card</button>

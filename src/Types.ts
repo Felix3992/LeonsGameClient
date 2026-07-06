@@ -121,11 +121,11 @@ class UnitTag extends HTMLElement {
 
         let attack_span = document.createElement("span");
         attack_span.classList.add("fw-bold", "align-self-end", "flex-grow-1");
-        attack_span.innerText = String(unit.attack);
+        attack_span.innerText = unit.attack.toString();
 
         let block_span = document.createElement("span");
         block_span.classList.add("fw-bold", "align-self-end");
-        block_span.innerText = String(unit.block);
+        block_span.innerText = unit.block.toString();
 
         this.appendChild(name_span);
         this.appendChild(card_body);
@@ -236,7 +236,7 @@ class StackTag extends HTMLElement {
             let current_span = document.createElement("span");
             current_span.style.alignSelf = "start";
             current_span.style.padding = "2px 0 0 2px";
-            current_span.innerText = String(stack.count);
+            current_span.innerText = stack.count.toString();
 
             let divider = document.createElement("div");
             divider.classList.add("w-100");
@@ -247,7 +247,7 @@ class StackTag extends HTMLElement {
             let count_span = document.createElement("span");
             count_span.style.alignSelf = "end";
             count_span.style.padding = "0 2px 2px 0";
-            count_span.innerText = String(card.stack_count);
+            count_span.innerText = card.stack_count.toString();
 
             stack_div.appendChild(current_span);
             stack_div.appendChild(divider);

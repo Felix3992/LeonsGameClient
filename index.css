@@ -60,6 +60,29 @@
     #attack_btn {
         height: 5vh;
     }
+
+    #overlays {
+        z-index: 10;
+    }
+
+    .dice-container {
+        display: flex;
+        height: 75%;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    #dice {
+        height: 30%;
+        aspect-ratio: 820 / 980;
+        background-image: url("assets/d20.png");
+        background-size: contain;
+        align-content: center;
+        text-align: center;
+        font-weight: bolder;
+        font-size: 3vh;
+        color: black;
+    }
 }
 
 @media (width < 1200px) {

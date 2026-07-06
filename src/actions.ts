@@ -36,6 +36,7 @@ class AvailableCard {
 
 class Action {
 
+    action?: "select" | "roll" | "cancelable_roll"
     available_cards: AvailableCard[] = []
     selected_card?: AvailableCard
 
@@ -58,12 +59,60 @@ class Action {
         }
     }
 
+    roll() {
+        let dice = document.getElementById("dice")!;
+        dice.onclick = () => {
+            sock.send("confirm");
+            dice.setAttribute("rolling", "true");
+            tick_number();
+        };
+
+        document.getElementById("overlays")!.hidden = false;
+
+        if (this.action == "cancelable_roll")
+            document.getElementById("cancel-roll-btn")!.hidden = false;
+        else
+            document.getElementById("cancel-roll-btn")!.hidden = true;
+    }
+
 }
 
 function handle_actions(message: string) {
     if (message.startsWith("action: ")) {
         let data = JSON.parse(message.substring("action: ".length));
         console.log(data);
-        Object.assign(new Action, data).setup_cards();
+        let action: Action = Object.assign(new Action, data)
+
+        if (action.action == "select")
+            action.setup_cards();
+        else
+            action.roll();
     }
+    else if (message.startsWith("rolled: ")) {
+        let roll = Number(message.substring("rolled: ".length));
+
+        let dice = document.getElementById("dice")!;
+        setTimeout(() => {
+            dice.removeAttribute("rolling");
+            dice.innerText = roll.toString();
+            dice.onclick = () => {
+                document.getElementById("overlays")!.hidden = true;
+                dice.innerText = "20";
+                sock.send("rolled");
+                dice.onclick = () => {};
+            }
+        }, 2000);
+    }
+}
+
+function tick_number() {
+    let dice = document.getElementById("dice")!;
+
+    if (!(dice.getAttribute("rolling") === "true")) {
+        console.log("returned");
+        return;
+    }
+
+    dice.innerText = Math.floor(Math.random() * 100 % 20 + 1).toString();
+    setTimeout(tick_number, 50);
 }

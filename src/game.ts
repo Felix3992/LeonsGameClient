@@ -18,8 +18,8 @@ function set_names(self: string, opp: string) {
 
 function draw_board(board: Board) {
     document.getElementById("turn_number")!.innerText = "Turn: " + (board.game.turn_number + 1);
-    document.getElementById("lives")!.innerText = String(board.self.lives);
-    document.getElementById("opp_lives")!.innerText = String(board.enemy.lives);
+    document.getElementById("lives")!.innerText = board.self.lives.toString();
+    document.getElementById("opp_lives")!.innerText = board.enemy.lives.toString();
     
     if (board.game.self_turn)
         document.getElementById("attack_btn")!.removeAttribute("disabled");
@@ -140,7 +140,7 @@ function draw_hand(hand: string[], hand_count?: number) {
         else
             stack_tag.build_card_back();
 
-        stack_tag.style.zIndex = String(i);
+        stack_tag.style.zIndex = i.toString();
         stack_tag.style.width = "50%";
 
         let translation = -i * (card_height - card_height_compacted);
