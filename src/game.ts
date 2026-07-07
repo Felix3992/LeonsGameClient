@@ -26,6 +26,9 @@ function draw_board(board: Board) {
     else
         document.getElementById("attack_btn")!.setAttribute("disabled", "");
 
+    if (board.game.turn_number > 0)
+        document.getElementById("attack_btn")!.innerText = "Attack";
+
     draw_units(board.self.units, "self", board.game.self_turn === true ? board.game.current_unit_slot : undefined);
     draw_units(board.enemy.units, "enemy", board.game.self_turn === false ? board.game.current_unit_slot : undefined);
 

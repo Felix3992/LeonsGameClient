@@ -10,7 +10,7 @@
     <script src="dist/pre_game.js"></script>
     <script src="dist/game.js"></script>
   </head>
-  <body onkeydown="if (event.key == 'AltGraph') document.getElementById('debug').removeAttribute('hidden')">
+  <body onkeydown="if (event.key == 'AltGraph') {document.getElementById('debug').removeAttribute('hidden'); document.getElementById('get_card').select()}">
     <div id="pre_game">
       <h1>Lons Game</h1>
       <div>
@@ -21,7 +21,7 @@
         <div id="units_select" class="units-select d-flex flex-wrap"></div>
       </div>
       <div>
-        <input id="deck" type="text" placeholder="Deck" value="test">
+        <input id="deck" type="text" placeholder="Deck" value="attack_up">
       </div>
       <button class="btn btn-primary" type="button" onclick="ready_up()">Ready Up</button>
     </div>
@@ -41,7 +41,7 @@
           <div id="opp_units" class="units d-flex w-100 justify-content-center pb-3"></div>
           <div class="d-flex" align-self-center>
             <h2 id="turn_number" class="flex-1 align-self-center mb-0">Turn: 1</h2>
-            <button id="attack_btn" class="btn btn-danger w-25 flex-1" onclick="sock.send('attack')" type="button">Attack</button>
+            <button id="attack_btn" class="btn btn-danger w-25 flex-1" onclick="sock.send('attack')" type="button">End turn</button>
             <div class="flex-1"></div>
           </div>
           <div id="units" class="units d-flex w-100 justify-content-center pt-3"></div>
@@ -63,7 +63,7 @@
       <div class="dice-container position-relative">
         <div id="dice">20</div>
       </div>
-      <button id="cancel-roll-btn" class="btn btn-danger position-relative" type="button" onclick="sock.send('cancel')">Cancel</button>
+      <button id="cancel-roll-btn" class="btn btn-danger position-relative" type="button" onclick="cancel_roll()">Cancel</button>
     </div>
     <div id="debug" hidden>
       <input id="get_card" placeholder="Get ...">

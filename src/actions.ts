@@ -108,11 +108,16 @@ function handle_actions(message: string) {
 function tick_number() {
     let dice = document.getElementById("dice")!;
 
-    if (!(dice.getAttribute("rolling") === "true")) {
-        console.log("returned");
+    if (!(dice.getAttribute("rolling") === "true"))
         return;
-    }
 
     dice.innerText = Math.floor(Math.random() * 100 % 20 + 1).toString();
     setTimeout(tick_number, 50);
+}
+
+function cancel_roll() {
+    sock.send("cancel");
+    
+    document.getElementById("overlays")!.hidden = true;
+    document.getElementById("dice")!.innerText = "20";
 }
