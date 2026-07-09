@@ -150,8 +150,7 @@ class StackTag extends HTMLElement {
         
         let card_img = document.createElement("img");
         card_img.classList.add("w-75");
-        // card_img.src = "assets/" + stack.card_ident + ".png";
-        card_img.src = "assets/attack_up.png";
+        card_img.src = "assets/" + stack.ident + ".png";
         header.appendChild(card_img);
 
         this.append_stack_icon(stack, card, header);
