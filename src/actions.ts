@@ -95,7 +95,7 @@ function handle_actions(message: string) {
         setTimeout(() => {
             dice.removeAttribute("rolling");
             dice.innerText = roll.toString();
-            dice.onclick = () => {
+            document.getElementById("overlays")!.onclick = () => {
                 document.getElementById("overlays")!.hidden = true;
                 dice.innerText = "20";
                 sock.send("rolled");

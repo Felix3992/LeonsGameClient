@@ -23,7 +23,7 @@
       <div>
         <input id="deck" type="text" placeholder="Deck" value="attack">
       </div>
-      <button class="btn btn-primary" type="button" onclick="ready_up()">Ready Up</button>
+      <button id="ready_up_btn" class="btn btn-primary" type="button" onclick="ready_up()">Ready Up</button>
     </div>
     <div id="game" class="d-none d-flex">
       <div id="field" class="field">
@@ -40,7 +40,7 @@
         <div class="d-flex flex-column">
           <div id="opp_units" class="units d-flex w-100 justify-content-center pb-3"></div>
           <div class="d-flex" align-self-center>
-            <h2 id="turn_number" class="flex-1 align-self-center mb-0">Turn: 1</h2>
+            <h2 id="rotation_number" class="flex-1 align-self-center mb-0">Rotation: 1</h2>
             <button id="attack_btn" class="btn btn-danger w-25 flex-1" onclick="sock.send('attack')" type="button">End turn</button>
             <div class="flex-1"></div>
           </div>
@@ -67,7 +67,7 @@
     </div>
     <div id="debug" hidden>
       <input id="get_card" placeholder="Get ...">
-      <button onclick="sock.send('get'); sock.send(document.getElementById('get_card').value)">Get Card</button>
+      <button id="get_card_btn" onclick="sock.send('get'); sock.send(document.getElementById('get_card').value)">Get Card</button>
     </div>
   </body>
 </html>

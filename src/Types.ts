@@ -2,7 +2,7 @@ class Board {
 
     game: {
         self_turn?: boolean,
-        turn_number: number,
+        rotation_number: number,
         current_unit_slot: number
     }
     enemy: {

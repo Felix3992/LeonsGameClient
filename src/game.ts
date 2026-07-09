@@ -17,7 +17,7 @@ function set_names(self: string, opp: string) {
 }
 
 function draw_board(board: Board) {
-    document.getElementById("turn_number")!.innerText = "Turn: " + (board.game.turn_number + 1);
+    document.getElementById("rotation_number")!.innerText = "Rotation: " + (board.game.rotation_number + 1);
     document.getElementById("lives")!.innerText = board.self.lives.toString();
     document.getElementById("opp_lives")!.innerText = board.enemy.lives.toString();
     
@@ -26,7 +26,7 @@ function draw_board(board: Board) {
     else
         document.getElementById("attack_btn")!.setAttribute("disabled", "");
 
-    if (board.game.turn_number > 0)
+    if (board.game.rotation_number > 0)
         document.getElementById("attack_btn")!.innerText = "Attack";
 
     draw_units(board.self.units, "self", board.game.self_turn === true ? board.game.current_unit_slot : undefined);
@@ -145,6 +145,7 @@ function draw_hand(hand: string[], hand_count?: number) {
 
         stack_tag.style.zIndex = i.toString();
         stack_tag.style.width = "50%";
+        stack_tag.style.fontSize = "small";
 
         let translation = -i * (card_height - card_height_compacted);
 

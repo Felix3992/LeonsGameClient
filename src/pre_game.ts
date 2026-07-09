@@ -87,8 +87,10 @@ function click_unit(unit: UnitTag) {
 }
 
 function ready_up() {
-    if (set_name() && set_units() && set_deck())
+    if (set_name() && set_units() && set_deck()) {
         sock.send('ready_up');
+        document.getElementById("ready_up_btn")?.setAttribute("disabled", "");
+    }
 }
 
 function set_name() {
@@ -121,21 +123,19 @@ function set_deck() {
 function start_game(opp_name: string, opp_units_idents: string[]) {
     sock.onmessage = (event) => handle_game_messages(event.data);
 
+    // Alert user if they try to refresh
+    window.addEventListener("beforeunload", (e) => {e.preventDefault();});
+
     document.getElementById("pre_game")!.remove();
 
-    let opp_units = opp_units_idents.map(ident => {
-        return units[ident]
-    })
-
-    let selected_units = selected_units_idents.map(ident => {
-        return units[ident]
-    })
+    let opp_units = opp_units_idents.map(ident => units[ident]);
+    let selected_units = selected_units_idents.map(ident => units[ident]);
 
     set_names(selected_name, opp_name);
     draw_board({
         game: {
             self_turn: undefined,
-            turn_number: 0,
+            rotation_number: 0,
             current_unit_slot: 0
         },
         enemy: {
