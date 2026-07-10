@@ -18,8 +18,12 @@
         background-size: contain;
     }
 
-    .units-select > .unit {
-        width: 10%;
+    .units-select > div {
+        display: flex;
+    }
+
+    .units-select > div > .unit {
+        width: 10vw;
         cursor: pointer;
     }
 

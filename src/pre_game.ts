@@ -48,7 +48,11 @@ sock.onmessage = (event) => {
 
 function create_units() {
     let units_div = document.getElementById("units_select")!;
+    let count = 0;
+
     for (let ident in units) {
+        let unit_div = document.createElement("div");
+
         let unit: UnitTag = document.createElement("unit-card") as UnitTag;
         unit.build(units[ident]);
         unit.onclick = () => click_unit(unit);
@@ -56,10 +60,63 @@ function create_units() {
         let num_span = document.createElement("span");
         num_span.id = unit.ident + "_num";
         num_span.classList.add("position-absolute", "top-0", "start-100", "translate-middle", "badge", "rouded-pill", "bg-danger");
+        num_span.style.zIndex = "1";
         num_span.hidden = true;
         unit.appendChild(num_span);
 
-        units_div.appendChild(unit);
+        let outer_tooltip_div = document.createElement("div");
+        outer_tooltip_div.style.zIndex = "1";
+        outer_tooltip_div.style.position = "relative";
+        outer_tooltip_div.hidden = true;
+
+        unit.onmouseenter = () => {outer_tooltip_div.hidden = false};
+        unit.onmouseleave = () => {outer_tooltip_div.hidden = true};
+
+        let inner_tooltip_div = document.createElement("div");
+        inner_tooltip_div.style.position = "absolute";
+        inner_tooltip_div.style.background = "aliceblue";
+        inner_tooltip_div.style.border = "black solid";
+        inner_tooltip_div.style.borderRadius = "20px";
+        inner_tooltip_div.style.padding = "0.5vw 1vw";
+        outer_tooltip_div.appendChild(inner_tooltip_div);
+
+        let header = document.createElement("h3");
+        header.innerText = "Included cards:";
+        inner_tooltip_div.appendChild(header);
+
+        let cards_div = document.createElement("div");
+        cards_div.style.display = "flex";
+        cards_div.style.gap = "1vw";
+        inner_tooltip_div.appendChild(cards_div);
+
+        for (let card_ident of units[ident].included_cards) {
+            let stack_tag = document.createElement("card-stack") as StackTag;
+            stack_tag.build(new Stack(card_ident));
+
+            stack_tag.style.fontSize = "small";
+            stack_tag.style.width = "10vw";
+
+            cards_div.appendChild(stack_tag);
+        }
+
+        let tooltip_width_vw = 2 + cards_div.children.length * 10 + (cards_div.children.length - 1) * 1;
+        let start_pos_vw = 1 + (count + 1) * (11.5);
+
+        if (tooltip_width_vw + start_pos_vw >= 100) {
+            outer_tooltip_div.style.right = tooltip_width_vw + "vw";
+            unit_div.appendChild(outer_tooltip_div);
+        }
+
+        unit_div.appendChild(unit);
+
+        if (tooltip_width_vw + start_pos_vw < 100) {
+            outer_tooltip_div.style.left = "1vw";
+            unit_div.appendChild(outer_tooltip_div);
+        }
+
+        units_div.appendChild(unit_div);
+
+        count++;
     }
 }
 
@@ -70,7 +127,7 @@ function create_decks() {
 function click_unit(unit: UnitTag) {
     if (selected_units_idents.includes(unit.ident)) {
         selected_units_idents[selected_units_idents.indexOf(unit.ident)] = "";
-        unit.style.border = "";
+        unit.style.outline = "";
         document.getElementById(unit.ident + "_num")!.hidden = true;
     }
     else {
@@ -78,7 +135,7 @@ function click_unit(unit: UnitTag) {
 
         if (index > -1) {
             selected_units_idents[index] = unit.ident;
-            unit.style.border = "limegreen solid 0.5vw";
+            unit.style.outline = "limegreen solid 0.5vw";
             let num_span = document.getElementById(unit.ident + "_num")!;
             num_span.innerText = String(index + 1);
             num_span.hidden = false;

@@ -179,7 +179,7 @@ function draw_discard_pile(pile_id: "discard_pile" | "opp_discard_pile", discard
 
     if (discard_pile.length > 0) {
         let pile = document.getElementById(pile_id)!;
-        document.getElementById(pile_id + "_empty")!.setAttribute("hidden", "");
+        document.getElementById(pile_id + "_empty")!.hidden = true;
 
         let top_card: StackTag = document.createElement("card-stack") as StackTag;
         top_card.build(new Stack(discard_pile[discard_pile.length - 1], 1, false, true));
@@ -194,5 +194,5 @@ function draw_discard_pile(pile_id: "discard_pile" | "opp_discard_pile", discard
         pile.appendChild(top_card);
     }
     else
-        document.getElementById(pile_id + "_empty")!.removeAttribute("hidden");
+        document.getElementById(pile_id + "_empty")!.hidden = false;
 }
