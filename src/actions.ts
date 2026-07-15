@@ -25,10 +25,7 @@ class AvailableCard {
                 card = unit as UnitTag;
         }
 
-        card.style.cursor = "pointer";
-        card.style.outline = "yellow dashed 0.3vw";
-        card.style.zIndex = "1";
-
+        card.classList.add("highlighted");
         card.onclick = () => this.action!.select(this);
     }
 
@@ -36,12 +33,16 @@ class AvailableCard {
 
 class Action {
 
-    action?: "select" | "roll" | "cancelable_roll"
+    action?: "select" | "roll"
     available_cards: AvailableCard[] = []
+    message: string = ""
+    cancelable: boolean = true
+
     selected_card?: AvailableCard
 
     setup_cards() {
         let available_cards = [];
+        clear_highlighted();
 
         for (let card of this.available_cards) {
             let available_card = Object.assign(new AvailableCard, card);
@@ -49,6 +50,13 @@ class Action {
             available_card.highlight();
             available_cards.push(available_card);
         }
+        
+        document.getElementById("cancel-action-btn")!.classList.remove("cancel-roll");
+
+        if (this.cancelable)
+            document.getElementById("cancel-action-btn")!.hidden = false;
+        else
+            document.getElementById("cancel-action-btn")!.hidden = true;
     }
 
     select(available_card: AvailableCard) {
@@ -56,23 +64,37 @@ class Action {
             this.selected_card = available_card;
             available_card.action = undefined;
             sock.send(JSON.stringify(available_card));
+            document.getElementById("overlays")!.hidden = true;
+            document.getElementById("message-container")!.hidden = true;
+            clear_highlighted();
         }
     }
 
     roll() {
         let dice = document.getElementById("dice")!;
         dice.onclick = () => {
+            document.getElementById("cancel-action-btn")!.hidden = true;
             sock.send("confirm");
             dice.setAttribute("rolling", "true");
             tick_number();
+            dice.onclick = () => {};
         };
 
         document.getElementById("overlays")!.hidden = false;
+        document.getElementById("roll-container")!.hidden = false;
 
-        if (this.action == "cancelable_roll")
-            document.getElementById("cancel-roll-btn")!.hidden = false;
+        document.getElementById("cancel-action-btn")!.classList.add("cancel-roll");
+
+        if (this.cancelable)
+            document.getElementById("cancel-action-btn")!.hidden = false;
         else
-            document.getElementById("cancel-roll-btn")!.hidden = true;
+            document.getElementById("cancel-action-btn")!.hidden = true;
+    }
+
+    display_message() {
+        document.getElementById("overlays")!.hidden = false;
+        document.getElementById("message")!.innerText = this.message;
+        document.getElementById("message-container")!.hidden = false;
     }
 
 }
@@ -87,6 +109,9 @@ function handle_actions(message: string) {
             action.setup_cards();
         else
             action.roll();
+
+        action.display_message();
+
     }
     else if (message.startsWith("rolled: ")) {
         let roll = Number(message.substring("rolled: ".length));
@@ -97,12 +122,23 @@ function handle_actions(message: string) {
             dice.innerText = roll.toString();
             document.getElementById("overlays")!.onclick = () => {
                 document.getElementById("overlays")!.hidden = true;
+                document.getElementById("roll-container")!.hidden = true;
                 dice.innerText = "20";
                 sock.send("rolled");
-                dice.onclick = () => {};
+                document.getElementById("overlays")!.onclick = () => {};
             }
-        }, 2000);
+        }, 1500);
     }
+}
+
+function clear_highlighted() {
+    for (let elem of Array.from(document.getElementsByClassName("highlighted"))) {
+        (elem as HTMLElement).onclick = () => {};
+        elem.classList.remove("highlighted");
+    }
+
+    document.getElementById("overlays")!.hidden = true;
+    document.getElementById("message-container")!.hidden = true;
 }
 
 function tick_number() {
@@ -115,9 +151,12 @@ function tick_number() {
     setTimeout(tick_number, 50);
 }
 
-function cancel_roll() {
+function cancel_action() {
     sock.send("cancel");
     
     document.getElementById("overlays")!.hidden = true;
+    document.getElementById("roll-container")!.hidden = true;
+    document.getElementById("dice")!.removeAttribute("rolling");
     document.getElementById("dice")!.innerText = "20";
+    document.getElementById("message-container")!.hidden = true;
 }

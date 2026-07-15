@@ -65,11 +65,15 @@ function draw_units(units: Unit[], player: "enemy" | "self", current_unit_slot?:
         if (unit.stacks)
             for (let stack of unit.stacks) {
                 let card_stack = document.createElement("card-stack") as StackTag;
+                card_stack.style.backgroundColor = "white";
 
                 if (!stack.ident)
                     card_stack.build_empty();
                 else 
                     card_stack.build_only_artwork(stack);
+
+                if (!stack.active)
+                    card_stack.style.filter = "invert(1)";
 
                 unit_div.appendChild(card_stack);
             }
@@ -143,7 +147,6 @@ function draw_hand(hand: string[], hand_count?: number) {
         else
             stack_tag.build_card_back();
 
-        stack_tag.style.zIndex = i.toString();
         stack_tag.style.width = "50%";
         stack_tag.style.fontSize = "small";
 
@@ -156,10 +159,6 @@ function draw_hand(hand: string[], hand_count?: number) {
                 if (!stack_tag.style.left || stack_tag.style.left === "0") {
                     stack_tag.style.left = "25%";
                     sock.send("play;" + JSON.stringify({card_num: i}));
-                }
-                else {
-                    stack_tag.style.left = "0";
-                    sock.send("cancel");
                 }
             };
 

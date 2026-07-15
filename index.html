@@ -59,11 +59,18 @@
       </div>
     </div>
     <div id="overlays" class="w-100 h-100 position-absolute top-0" hidden>
-      <div class="w-100 h-100 position-absolute top-0 bg-black opacity-50"></div>
-      <div class="dice-container position-relative">
-        <div id="dice">20</div>
+      <div class="w-100 h-100 position-absolute top-0 bg-black opacity-75"></div>
+      <div id="roll-container" class="position-absolute w-100 h-100" hidden>
+        <div class="dice-container position-relative">
+          <div id="dice">20</div>
+        </div>
       </div>
-      <button id="cancel-roll-btn" class="btn btn-danger position-relative" type="button" onclick="cancel_roll()">Cancel</button>
+      <div id="message-container" class="position-absolute w-100 h-100">
+        <div class="position-relative w-100 h-100 justify-items-center align-content-end">
+          <h1 id="message" class="text-center">Select 3 cards to discard</h1>
+        </div>
+      </div>
+      <button id="cancel-action-btn" class="btn btn-danger position-relative align-self-center w-25" type="button" onclick="cancel_action()">Cancel</button>
     </div>
     <div id="debug" hidden>
       <input id="get_card" placeholder="Get ...">

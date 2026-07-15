@@ -231,6 +231,7 @@ class StackTag extends HTMLElement {
             let stack_div = document.createElement("div");
             stack_div.classList.add("w-25", "d-flex", "align-items-center");
             stack_div.style.border = "1px solid";
+            stack_div.style.backgroundColor = "white";
 
             let current_span = document.createElement("span");
             current_span.style.alignSelf = "start";
