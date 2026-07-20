@@ -180,6 +180,9 @@ class StackTag extends HTMLElement {
             else if (card.activation_bonus_desc)
                 bonus_desc.innerText = card.activation_bonus_desc;
 
+            if (stack.stack_bonus && card.stack_bonus_desc)
+                footer.style.outline = "0.15vw solid gold";
+
             footer.appendChild(bonus_desc);
             this.appendChild(footer);
         }

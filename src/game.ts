@@ -69,8 +69,34 @@ function draw_units(units: Unit[], player: "enemy" | "self", current_unit_slot?:
 
                 if (!stack.ident)
                     card_stack.build_empty();
-                else 
+                else  {
                     card_stack.build_only_artwork(stack);
+
+                    card_stack.onmouseenter = () => {
+                        let rect = card_stack.getBoundingClientRect();
+
+                        let stack_tooltip = document.getElementById("stack-tooltip") as StackTag;
+                        stack_tooltip.replaceChildren();
+                        stack_tooltip.build(stack);
+
+                        stack_tooltip.style.width = "10vw";
+                        stack_tooltip.style.left = (rect.left + rect.width).toString() + "px";
+
+                        stack_tooltip.hidden = false;
+                        let tooltip_half_height = stack_tooltip.getBoundingClientRect().height / 2;
+                        let stack_center = rect.top + rect.height / 2;
+
+                        if (stack_center + tooltip_half_height > viewport.segments[0].height)
+                            stack_tooltip.style.top = (stack_center - tooltip_half_height - (stack_center + tooltip_half_height - viewport.segments[0].height)).toString() + "px";
+                        else
+                            stack_tooltip.style.top = (stack_center - tooltip_half_height).toString() + "px";
+
+                        card_stack.onmouseleave = () => {
+                            stack_tooltip.hidden = true;
+                            stack_tooltip.replaceChildren();
+                        };
+                    };
+                }
 
                 if (!stack.active)
                     card_stack.style.filter = "invert(1)";
