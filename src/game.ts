@@ -1,3 +1,5 @@
+declare var viewport: { "segments": { "height": number, "width": number }[] };
+
 function handle_game_messages(message: string) {
     if (message.startsWith("board: ")) {
         let board: Board = JSON.parse(message.substring("board: ".length));
