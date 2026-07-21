@@ -25,9 +25,7 @@ div:has(> .highlighted) > *:not(.highlighted) {
     }
 
     #units_select {
-        padding: 2vh 2vw;
-        gap: 1.5vw;
-        font-size: 2vw;
+        font-size: 1.7vw;
     }
 
     unit-card {
@@ -37,10 +35,10 @@ div:has(> .highlighted) > *:not(.highlighted) {
 
     .units-select > div {
         display: flex;
+        flex: 1;
     }
 
     .units-select > div > .unit {
-        width: 10vw;
         cursor: pointer;
     }
 

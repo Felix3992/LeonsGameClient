@@ -1,7 +1,7 @@
 class Board {
 
     game: {
-        self_turn?: boolean,
+        self_turn: boolean,
         rotation_number: number,
         current_unit_slot: number
     }
@@ -74,9 +74,9 @@ class Deck {
 
     ident: string
     name: string
-    cards: string[]
+    cards: { "count": number, "ident": string }[]
 
-    constructor(ident: string, name: string, cards: string[]) {
+    constructor(ident: string, name: string, cards: { "count": number, "ident": string }[]) {
         this.ident = ident;
         this.name = name;
         this.cards = cards;
@@ -114,7 +114,7 @@ class UnitTag extends HTMLElement {
         name_span.classList.add("card-title", "align-self-center", "text-center", "text-nowrap");
         name_span.innerText = unit.name;
         // Adjust font size to not overflow
-        name_span.style.fontSize = -0.11 * unit.name.length + 2.56 + "vw";
+        name_span.style.fontSize = -0.075 * unit.name.length + 1.575 + "vw";
 
         let card_body = document.createElement("div");
         card_body.classList.add("card-body", "d-flex");
@@ -139,6 +139,8 @@ customElements.define("unit-card", UnitTag);
 
 class StackTag extends HTMLElement {
 
+    name_elem?: HTMLElement
+
     build(stack: Stack) {
         let card: Card = cards[stack.ident];
         this.classList.add("card");
@@ -160,13 +162,13 @@ class StackTag extends HTMLElement {
         let body = document.createElement("div");
         body.classList.add("card-body");
 
-        let name = document.createElement("h5");
-        name.innerText = card.name;
+        this.name_elem = document.createElement("h5");
+        this.name_elem.innerText = card.name;
 
         let description = document.createElement("span");
         description.innerText = card.description;
 
-        body.appendChild(name);
+        body.appendChild(this.name_elem);
         body.appendChild(description);
         this.appendChild(body);
 

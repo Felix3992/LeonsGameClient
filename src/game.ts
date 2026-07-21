@@ -34,8 +34,8 @@ function draw_board(board: Board) {
     draw_units(board.self.units, "self", board.game.self_turn === true ? board.game.current_unit_slot : undefined);
     draw_units(board.enemy.units, "enemy", board.game.self_turn === false ? board.game.current_unit_slot : undefined);
 
-    draw_hand(board.self.hand);
-    draw_hand([], board.enemy.hand);
+    draw_hand(board.self.hand, board.game.self_turn);
+    draw_hand([], false, board.enemy.hand);
 
     draw_discard_pile("discard_pile", board.self.discard_pile);
     draw_discard_pile("opp_discard_pile", board.enemy.discard_pile);
@@ -146,7 +146,7 @@ function deselect_card(enemy: boolean = false) {
     }
 }
 
-function draw_hand(hand: string[], hand_count?: number) {
+function draw_hand(hand: string[], self_turn: boolean, hand_count?: number) {
     let enemy = false;
 
     if (hand_count !== undefined) {
@@ -183,12 +183,13 @@ function draw_hand(hand: string[], hand_count?: number) {
         stack_tag.style.transform = "translateY(" + translation + "px)";
 
         if (!enemy) {
-            stack_tag.onclick = () => {
-                if (!stack_tag.style.left || stack_tag.style.left === "0") {
-                    stack_tag.style.left = "25%";
-                    sock.send("play;" + JSON.stringify({card_num: i}));
-                }
-            };
+            if (self_turn)
+                stack_tag.onclick = () => {
+                    if (!stack_tag.style.left || stack_tag.style.left === "0") {
+                        stack_tag.style.left = "25%";
+                        sock.send("play;" + JSON.stringify({card_num: i}));
+                    }
+                };
 
             stack_tag.onmouseover = () => select_card(i);
             stack_tag.onmouseout = () => deselect_card();

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="en" class="w-100 h-100">
   <head>
     <meta charset="utf-8">
     <title>Leons Game</title>
@@ -10,20 +10,26 @@
     <script src="dist/pre_game.js"></script>
     <script src="dist/game.js"></script>
   </head>
-  <body onkeydown="if (event.key == 'AltGraph') {document.getElementById('debug').removeAttribute('hidden'); document.getElementById('get_card').select()}">
-    <div id="pre_game">
-      <h1>Lons Game</h1>
-      <div>
-        <input id="name_input" type="text" placeholder="Name">
+  <body class="w-100 h-100" onkeydown="if (event.key == 'AltGraph') {document.getElementById('debug').removeAttribute('hidden'); document.getElementById('get_card').select()}">
+    <div id="pre_game" class="w-100 h-100 d-flex flex-column">
+      <h1 class="align-self-center">Lons Game</h1>
+      <div class="d-flex flex-1">
+        <div class="w-25 d-flex flex-column justify-content-center">
+          <div class="form-floating mb-2">
+            <input id="name_input" class="form-control" type="text">
+            <label for="name_input">Name</label>
+          </div>
+          <div class="form-floating mb-2">
+            <select id="deck_select" class="form-select" onchange="update_selected_deck()"></select>
+            <label for="deck_select">Deck</label>
+          </div>
+          <button id="ready_up_btn" class="btn btn-primary" type="button" onclick="ready_up()">Ready Up</button>
+        </div>
+        <div class="w-75 p-1">
+          <div id="units_select" class="units-select w-100 d-flex flex-wrap justify-content-center gap-3 pb-3"></div>
+          <div id="selected_deck" class="w-100 d-flex flex-wrap justify-content-center gap-2"></div>
+        </div>
       </div>
-      <div>
-        <h2>Units: </h2>
-        <div id="units_select" class="units-select d-flex flex-wrap"></div>
-      </div>
-      <div>
-        <input id="deck" type="text" placeholder="Deck" value="attack">
-      </div>
-      <button id="ready_up_btn" class="btn btn-primary" type="button" onclick="ready_up()">Ready Up</button>
     </div>
     <div id="game" class="d-none d-flex">
       <div id="field" class="field">
